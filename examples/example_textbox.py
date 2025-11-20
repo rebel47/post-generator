@@ -3,8 +3,20 @@ Example: Text Box with Background
 Create posts with text inside colored boxes
 """
 
+import sys
+import os
+# Add parent directory to path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from post_generator import PostGenerator
 from post_generator.color_schemes import ColorSchemes
+
+def get_output_path(filename):
+    """Get the correct output path relative to project root"""
+    parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    output_dir = os.path.join(parent_dir, 'output')
+    os.makedirs(output_dir, exist_ok=True)
+    return os.path.join(output_dir, filename)
 
 # Get color scheme
 color_scheme = ColorSchemes.CORPORATE_TECH
@@ -46,6 +58,6 @@ generator.add_text_box(
 )
 
 # Save
-generator.save("output/example_textbox.png")
+generator.save(get_output_path("example_textbox.png"))
 
 print("✓ Text box example completed!")

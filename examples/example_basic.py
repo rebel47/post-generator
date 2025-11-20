@@ -3,7 +3,19 @@ Example: Basic Post Generation
 Simple example showing how to create a basic post
 """
 
+import sys
+import os
+# Add parent directory to path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from post_generator import PostGenerator
+
+def get_output_path(filename):
+    """Get the correct output path relative to project root"""
+    parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    output_dir = os.path.join(parent_dir, 'output')
+    os.makedirs(output_dir, exist_ok=True)
+    return os.path.join(output_dir, filename)
 
 # Create a generator instance
 generator = PostGenerator()
@@ -29,6 +41,6 @@ generator.add_text(
 )
 
 # Save the image
-generator.save("output/example_basic.png")
+generator.save(get_output_path("example_basic.png"))
 
 print("✓ Basic example completed!")

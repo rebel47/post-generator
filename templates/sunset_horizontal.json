@@ -1,0 +1,48 @@
+{
+  "name": "sunset_horizontal",
+  "dimension": "horizontal",
+  "background_type": "gradient",
+  "color_scheme": "gradient_sunset",
+  "gradient_direction": "horizontal",
+  "pattern_type": "lines",
+  "pattern_spacing": 50,
+  "pattern_angle": 135,
+  "add_vignette": false,
+  "vignette_intensity": 0.6,
+  "add_noise": false,
+  "noise_intensity": 10,
+  "add_blur_region": false,
+  "logo_position": "center",
+  "logo_size": [
+    200,
+    200
+  ],
+  "logo_margin": 40,
+  "headline_font": "fonts/Poppins-Bold.ttf",
+  "headline_size": 85,
+  "headline_position": [
+    50,
+    250
+  ],
+  "headline_max_width": 1100,
+  "headline_shadow": false,
+  "headline_outline": false,
+  "has_subheadline": false,
+  "subheadline_font": "fonts/Poppins-Regular.ttf",
+  "subheadline_size": 40,
+  "subheadline_position": [
+    40,
+    600
+  ],
+  "subheadline_max_width": 900,
+  "use_text_box": false,
+  "text_box_position": [
+    40,
+    700
+  ],
+  "text_box_size": [
+    1000,
+    200
+  ],
+  "text_box_bg_opacity": 180
+}

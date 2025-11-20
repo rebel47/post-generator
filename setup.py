@@ -15,7 +15,7 @@ setup(
     description="A versatile LinkedIn-style post generator for creating branded social media content",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/post-generator",
+    url="https://github.com/rebel47/post-generator",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
