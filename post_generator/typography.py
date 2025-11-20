@@ -65,26 +65,32 @@ class Typography:
     def wrap_text(self, text: str, font: ImageFont.FreeTypeFont, max_width: int, 
                   draw: ImageDraw.Draw) -> List[str]:
         """Wrap text to fit within max_width"""
+        # First, split by explicit newlines
+        paragraphs = text.split('\n')
         lines = []
-        words = text.split()
         
-        if not words:
-            return [""]
-        
-        current_line = words[0]
-        
-        for word in words[1:]:
-            test_line = f"{current_line} {word}"
-            bbox = draw.textbbox((0, 0), test_line, font=font)
-            width = bbox[2] - bbox[0]
+        for paragraph in paragraphs:
+            words = paragraph.split()
             
-            if width <= max_width:
-                current_line = test_line
-            else:
-                lines.append(current_line)
-                current_line = word
+            if not words:
+                lines.append("")  # Preserve empty lines
+                continue
+            
+            current_line = words[0]
+            
+            for word in words[1:]:
+                test_line = f"{current_line} {word}"
+                bbox = draw.textbbox((0, 0), test_line, font=font)
+                width = bbox[2] - bbox[0]
+                
+                if width <= max_width:
+                    current_line = test_line
+                else:
+                    lines.append(current_line)
+                    current_line = word
+            
+            lines.append(current_line)
         
-        lines.append(current_line)
         return lines
     
     def draw_multiline_text(self, draw: ImageDraw.Draw, position: Tuple[int, int],

@@ -112,7 +112,12 @@ with col2:
     
     # Main text
     st.subheader("Main Text")
-    main_text = st.text_area("Text Content", "Your Amazing\nHeadline Here", height=100)
+    main_text = st.text_area(
+        "Text Content", 
+        "Your Amazing\nHeadline Here", 
+        height=100,
+        help="Press Enter to create new lines"
+    )
     
     main_col1, main_col2 = st.columns(2)
     with main_col1:
@@ -136,7 +141,12 @@ with col2:
     add_secondary = st.checkbox("Add Secondary Text")
     if add_secondary:
         st.subheader("Secondary Text")
-        secondary_text = st.text_area("Secondary Text", "Your tagline or subtext", height=60)
+        secondary_text = st.text_area(
+            "Secondary Text", 
+            "Your tagline or subtext", 
+            height=60,
+            help="Press Enter for new lines"
+        )
         
         sec_col1, sec_col2 = st.columns(2)
         with sec_col1:
@@ -155,7 +165,12 @@ with col2:
     add_textbox = st.checkbox("Add Text Box")
     if add_textbox:
         st.subheader("Text Box")
-        textbox_content = st.text_area("Text Box Content", "• Feature 1\n• Feature 2\n• Feature 3", height=80)
+        textbox_content = st.text_area(
+            "Text Box Content", 
+            "• Feature 1\n• Feature 2\n• Feature 3", 
+            height=80,
+            help="Press Enter for new lines"
+        )
         
         tb_col1, tb_col2 = st.columns(2)
         with tb_col1:
