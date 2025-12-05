@@ -718,6 +718,162 @@ async def generate_batch(posts: List[PostRequest]):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+class BatchTextRequest(BaseModel):
+    """Request for batch generation with same design, different text"""
+    texts: List[str]  # List of different text content
+    design: PostRequest  # Common design settings
+    logo_url: Optional[str] = None  # Optional logo URL to download
+
+
+@app.post("/generate/batch-smart")
+async def generate_batch_smart(batch: BatchTextRequest):
+    """
+    Generate multiple posts with same design but different text
+    Perfect for n8n: same logo, gradient, effects - just different text
+    
+    Returns ZIP file with all images
+    """
+    try:
+        import zipfile
+        import io
+        from fastapi.responses import StreamingResponse
+        
+        output_dir = tempfile.gettempdir()
+        results = []
+        logo_path = None
+        
+        # Download logo once if provided
+        if batch.logo_url:
+            import requests
+            logo_ext = batch.logo_url.split('.')[-1]
+            logo_path = os.path.join(output_dir, f"batch_logo_{uuid.uuid4()}.{logo_ext}")
+            response = requests.get(batch.logo_url)
+            with open(logo_path, 'wb') as f:
+                f.write(response.content)
+        
+        # Generate each post
+        for i, text in enumerate(batch.texts):
+            generator = PostGenerator()
+            output_path = os.path.join(output_dir, f"post_{i+1}.png")
+            
+            # Canvas
+            canvas_size = batch.design.dimension
+            if batch.design.dimension == "custom" and batch.design.custom_width and batch.design.custom_height:
+                canvas_size = (batch.design.custom_width, batch.design.custom_height)
+            
+            # Background
+            bg_color = (0, 0, 0)
+            if batch.design.color_scheme:
+                scheme = ColorSchemes.get_scheme(batch.design.color_scheme)
+                bg_color = scheme.get_background_rgb()
+            elif batch.design.bg_color:
+                bg_color = hex_to_rgb(batch.design.bg_color)
+            
+            generator.create_canvas(canvas_size, bg_color)
+            
+            # Gradient
+            if batch.design.gradient_start and batch.design.gradient_end:
+                start = hex_to_rgb(batch.design.gradient_start)
+                end = hex_to_rgb(batch.design.gradient_end)
+                generator.apply_gradient(start, end, batch.design.gradient_direction)
+            
+            # Patterns
+            if batch.design.pattern == 'lines':
+                pattern_color = hex_to_rgb(batch.design.pattern_color) if batch.design.pattern_color else (255, 255, 255)
+                generator.add_pattern_lines(
+                    color=pattern_color,
+                    spacing=batch.design.pattern_spacing,
+                    angle=batch.design.pattern_angle,
+                    width=batch.design.pattern_width,
+                    opacity=batch.design.pattern_opacity
+                )
+            
+            # Shapes
+            if batch.design.shape_type:
+                shape_color = hex_to_rgb(batch.design.shape_color) if batch.design.shape_color else (255, 255, 255)
+                generator.add_geometric_shapes(
+                    batch.design.shape_type,
+                    color=shape_color,
+                    opacity=batch.design.shape_opacity,
+                    count=batch.design.shape_count
+                )
+            
+            # Effects
+            if batch.design.add_vignette:
+                generator.add_vignette(batch.design.vignette_intensity)
+            if batch.design.add_noise:
+                generator.add_noise(batch.design.noise_intensity)
+            if batch.design.add_blur:
+                generator.add_blur(batch.design.blur_radius)
+            
+            # Logo (same for all)
+            if logo_path:
+                generator.add_logo(logo_path, position=batch.design.logo_position, 
+                                 size=(batch.design.logo_size, batch.design.logo_size))
+            
+            # Text (different for each)
+            text_color = hex_to_rgb(batch.design.text_color)
+            generator.add_text(
+                text,
+                position=(batch.design.text_x, batch.design.text_y),
+                font_size=batch.design.font_size,
+                color=text_color,
+                max_width=batch.design.text_max_width,
+                shadow=batch.design.text_shadow,
+                outline=batch.design.text_outline
+            )
+            
+            # Subtext (if design has it)
+            if batch.design.subtext:
+                subtext_color = hex_to_rgb(batch.design.subtext_color) if batch.design.subtext_color else text_color
+                generator.add_text(
+                    batch.design.subtext,
+                    position=(batch.design.subtext_x, batch.design.subtext_y),
+                    font_size=batch.design.subtext_font_size,
+                    color=subtext_color,
+                    max_width=batch.design.text_max_width
+                )
+            
+            # Text box (if design has it)
+            if batch.design.add_textbox and batch.design.textbox_content:
+                tb_bg = hex_to_rgb(batch.design.textbox_bg_color) + (batch.design.textbox_bg_opacity,)
+                tb_text = hex_to_rgb(batch.design.textbox_text_color)
+                generator.add_text_box(
+                    batch.design.textbox_content,
+                    box_position=(batch.design.textbox_x, batch.design.textbox_y),
+                    box_size=(batch.design.textbox_width, batch.design.textbox_height),
+                    bg_color=tb_bg,
+                    text_color=tb_text,
+                    font_size=batch.design.textbox_font_size,
+                    padding=batch.design.textbox_padding
+                )
+            
+            generator.save(output_path)
+            results.append(output_path)
+        
+        # Cleanup logo
+        if logo_path and os.path.exists(logo_path):
+            os.remove(logo_path)
+        
+        # Create ZIP file
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            for i, file_path in enumerate(results):
+                zip_file.write(file_path, f"post_{i+1}.png")
+                os.remove(file_path)  # Clean up
+        
+        zip_buffer.seek(0)
+        
+        return StreamingResponse(
+            zip_buffer,
+            media_type="application/zip",
+            headers={"Content-Disposition": f"attachment; filename=posts_batch_{len(batch.texts)}.zip"}
+        )
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 def hex_to_rgb(hex_color: str) -> tuple:
     """Convert hex color to RGB tuple"""
     hex_color = hex_color.lstrip('#')
