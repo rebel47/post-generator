@@ -1,294 +1,586 @@
-# 🎨 LinkedIn-Style Post Generator
+# 🎨 Post Generator# 🎨 LinkedIn-Style Post Generator
 
-A powerful, versatile Python library for creating branded social media posts with professional designs, gradients, patterns, and effects.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![Python](https://img.shields.io/badge/python-3.7+-green)
-![License](https://img.shields.io/badge/license-MIT-orange)
 
-## ✨ Features
+**Generate stunning social media posts with Python - No design skills needed!**A powerful, versatile Python library for creating branded social media posts with professional designs, gradients, patterns, and effects.
 
-### 🎯 Core Capabilities
+
+
+A powerful yet simple tool to create professional social media graphics with:![Version](https://img.shields.io/badge/version-1.0.0-blue)
+
+- 🖼️ **Visual UI** (Streamlit) - Point, click, customize![Python](https://img.shields.io/badge/python-3.7+-green)
+
+- 🔗 **REST API** - Integrate with n8n, Zapier, Make, or any automation tool![License](https://img.shields.io/badge/license-MIT-orange)
+
+- ⚡ **Fast** - Generate images in seconds
+
+- 🎯 **Feature-Rich** - Gradients, patterns, effects, logos, text styling## ✨ Features
+
+
+
+---### 🎯 Core Capabilities
+
 - **Multiple Post Formats**: Square, vertical, story, horizontal, LinkedIn banner, Twitter post
-- **Template System**: 10+ pre-built professional templates
+
+## 🚀 Quick Start- **Template System**: 10+ pre-built professional templates
+
 - **12 Color Schemes**: Professional, bold, minimal, gradient, and corporate themes
-- **Advanced Typography**: Auto text wrapping, multiple fonts, shadow & outline effects
-- **Rich Effects**: Gradients, patterns, vignette, noise, blur
 
-### 🛠️ Tools & Integrations
-- **CLI Tool**: Command-line interface for quick generation
-- **REST API**: FastAPI-based API for web integration
-- **Batch Generator**: Generate hundreds of posts from CSV/JSON
-- **Template Loader**: Load, save, and customize templates
+### 1. Install Dependencies- **Advanced Typography**: Auto text wrapping, multiple fonts, shadow & outline effects
 
-### 🎨 Background Styles
-- Solid colors
-- Linear gradients (vertical, horizontal, diagonal)
-- Radial gradients
-- Pattern overlays (lines, circles, rectangles, triangles)
-- Geometric shapes
-- Custom backgrounds
+```bash- **Rich Effects**: Gradients, patterns, vignette, noise, blur
 
-### 📝 Text Features
-- Automatic text wrapping
-- Multi-line support
-- Shadow effects
-- Outline effects
-- Multiple font styles
-- Custom positioning
-- Text boxes with backgrounds
-
-## 📦 Installation
-
-```bash
-# Clone or download the repository
-cd "Post Generator"
-
-# Install dependencies
 pip install -r requirements.txt
+
+```### 🛠️ Tools & Integrations
+
+- **CLI Tool**: Command-line interface for quick generation
+
+### 2. Run Streamlit UI (Visual Interface)- **REST API**: FastAPI-based API for web integration
+
+```bash- **Batch Generator**: Generate hundreds of posts from CSV/JSON
+
+streamlit run streamlit_app.py- **Template Loader**: Load, save, and customize templates
+
 ```
 
-## 🚀 Quick Start
+Opens at: http://localhost:8501### 🎨 Background Styles
+
+- Solid colors
+
+### 3. Run API Server (For Automation)- Linear gradients (vertical, horizontal, diagonal)
+
+```bash- Radial gradients
+
+python api.py- Pattern overlays (lines, circles, rectangles, triangles)
+
+```- Geometric shapes
+
+Opens at: http://localhost:8000  - Custom backgrounds
+
+API Docs: http://localhost:8000/docs
+
+### 📝 Text Features
+
+---- Automatic text wrapping
+
+- Multi-line support
+
+## 🎯 Features- Shadow effects
+
+- Outline effects
+
+### 🎨 **Canvas & Backgrounds**- Multiple font styles
+
+- **Dimensions:** Square (1080x1080), Story (1080x1920), Horizontal, Wide, Banner, Custom- Custom positioning
+
+- **Backgrounds:** Solid colors, Gradients (5 directions), Color schemes (12 presets)- Text boxes with backgrounds
+
+
+
+### 🌈 **Visual Effects**## 📦 Installation
+
+- **Gradients:** Vertical, Horizontal, Diagonal, Radial
+
+- **Patterns:** Lines with custom spacing, angle, width, opacity```bash
+
+- **Shapes:** Circles, Rectangles, Triangles# Clone or download the repository
+
+- **Effects:** Vignette, Noise texture, Blurcd "Post Generator"
+
+
+
+### 📝 **Text Styling**# Install dependencies
+
+- **Main Text:** Custom position, size, color, fontpip install -r requirements.txt
+
+- **Effects:** Shadow, Outline```
+
+- **Multi-line:** Automatic line breaks
+
+- **Secondary Text:** Optional tagline/subtext## 🚀 Quick Start
+
+- **Text Boxes:** Colored boxes with custom styling
 
 ### Basic Usage
 
-```python
-from post_generator import PostGenerator
+### 🖼️ **Logo Support**
+
+- Upload your logo```python
+
+- 5 positions: Top-left, Top-right, Bottom-left, Bottom-right, Centerfrom post_generator import PostGenerator
+
+- Custom size control
 
 # Create generator
-generator = PostGenerator()
 
-# Create canvas with gradient
-generator.create_canvas("square", color=(0, 0, 0))
+### 🎨 **Color Schemes** (12 Presets)generator = PostGenerator()
+
+- Professional, Bold Purple, Minimal Light, Gradient Sunset
+
+- Corporate Tech, Ocean Breeze, Warm Autumn, Monochrome# Create canvas with gradient
+
+- Vibrant, Pastel Dream, Dark Mode, Nature Greengenerator.create_canvas("square", color=(0, 0, 0))
+
 generator.apply_gradient(
-    start_color=(255, 0, 0),
+
+---    start_color=(255, 0, 0),
+
     end_color=(0, 0, 0),
-    direction="vertical"
+
+## 🖥️ Usage    direction="vertical"
+
 )
+
+### Option 1: Visual UI (Streamlit)
 
 # Add text
-generator.add_text(
-    text="Innovation Starts Here",
-    position=(40, 400),
-    font_size=70,
-    color=(255, 255, 255),
-    shadow=True
-)
 
-# Save
-generator.save("output/my_post.png")
-```
+**Perfect for:** Quick creation, testing, non-technical usersgenerator.add_text(
+
+    text="Innovation Starts Here",
+
+```bash    position=(40, 400),
+
+streamlit run streamlit_app.py    font_size=70,
+
+```    color=(255, 255, 255),
+
+    shadow=True
+
+**Features:**)
+
+- ✅ No coding required
+
+- ✅ Real-time preview# Save
+
+- ✅ Upload logosgenerator.save("output/my_post.png")
+
+- ✅ Download instantly```
+
+- ✅ All features accessible
 
 ### Using Templates
 
-```python
-from post_generator import PostGenerator
-from post_generator.color_schemes import ColorSchemes
-from post_generator.template_loader import TemplateLoader
+**Workflow:**
 
-# Create default templates
-loader = TemplateLoader()
+1. Choose canvas size```python
+
+2. Pick background (color/gradient/scheme)from post_generator import PostGenerator
+
+3. Upload logo (optional)from post_generator.color_schemes import ColorSchemes
+
+4. Add effects (vignette, noise, patterns)from post_generator.template_loader import TemplateLoader
+
+5. Type your text
+
+6. Click "Generate Post"# Create default templates
+
+7. Download!loader = TemplateLoader()
+
 loader.create_default_templates()
 
+---
+
 # Load and use a template
-template = loader.load_template("professional_gradient")
+
+### Option 2: REST API (For Automation)template = loader.load_template("professional_gradient")
+
 color_scheme = ColorSchemes.get_scheme(template.color_scheme)
 
+**Perfect for:** n8n, Zapier, Make, custom integrations, batch processing
+
 generator = PostGenerator()
-generator.create_canvas(template.dimension, color_scheme.get_background_rgb())
-generator.apply_gradient(
-    color_scheme.get_primary_rgb(),
+
+```bashgenerator.create_canvas(template.dimension, color_scheme.get_background_rgb())
+
+python api.pygenerator.apply_gradient(
+
+```    color_scheme.get_primary_rgb(),
+
     color_scheme.get_secondary_rgb(),
-    template.gradient_direction
+
+**Base URL:** `http://localhost:8000`    template.gradient_direction
+
 )
-generator.add_text(
+
+#### 📡 Key Endpointsgenerator.add_text(
+
     "Your Message Here",
-    position=tuple(template.headline_position),
-    font_size=template.headline_size,
-    color=color_scheme.get_text_rgb(),
-    shadow=True
-)
+
+##### 1. Generate Post    position=tuple(template.headline_position),
+
+```http    font_size=template.headline_size,
+
+POST /generate    color=color_scheme.get_text_rgb(),
+
+Content-Type: multipart/form-data    shadow=True
+
+```)
+
 generator.save("output/template_post.png")
-```
 
-## 🖥️ Command Line Interface
+**Minimum Example:**```
 
-### Generate from Template
-```bash
+```json
+
+{## 🖥️ Command Line Interface
+
+  "text": "Hello World"
+
+}### Generate from Template
+
+``````bash
+
 python cli.py --template professional_gradient --text "Innovation starts here" --logo logo.png
-```
 
-### Custom Generation
-```bash
-python cli.py --text "Hello World" --gradient-start "#000000" --gradient-end "#FF0000" --vignette --shadow
-```
+**Advanced Example:**```
 
-### List Available Options
-```bash
-# List templates
-python cli.py --list-templates
+```json
 
-# List color schemes
+{### Custom Generation
+
+  "text": "Your Amazing\nHeadline Here",```bash
+
+  "subtext": "Your tagline",python cli.py --text "Hello World" --gradient-start "#000000" --gradient-end "#FF0000" --vignette --shadow
+
+  "dimension": "square",```
+
+  "gradient_start": "#667eea",
+
+  "gradient_end": "#764ba2",### List Available Options
+
+  "add_vignette": true,```bash
+
+  "pattern": "lines",# List templates
+
+  "text_shadow": truepython cli.py --list-templates
+
+}
+
+```# List color schemes
+
 python cli.py --list-colors
 
-# Create default templates
-python cli.py --create-defaults
-```
+##### 2. List Color Schemes
 
-### CLI Options
+```http# Create default templates
 
-| Option | Description |
-|--------|-------------|
+GET /color-schemespython cli.py --create-defaults
+
+``````
+
+
+
+##### 3. List Dimensions### CLI Options
+
+```http
+
+GET /dimensions| Option | Description |
+
+```|--------|-------------|
+
 | `--template, -t` | Template name to use |
-| `--text` | Main headline text |
-| `--subtext` | Subheadline text |
-| `--logo` | Path to logo file |
-| `--dimension, -d` | Post dimensions (square, vertical, story, etc.) |
-| `--color-scheme, -c` | Color scheme name |
-| `--gradient-start` | Gradient start color (hex) |
-| `--gradient-end` | Gradient end color (hex) |
-| `--pattern` | Pattern type (lines, circles, rectangles) |
-| `--vignette` | Add vignette effect |
-| `--noise` | Add noise texture |
-| `--shadow` | Add text shadow |
-| `--outline` | Add text outline |
-| `--output, -o` | Output file path |
 
-## 🌐 REST API
+##### 4. Batch Generate| `--text` | Main headline text |
+
+```http| `--subtext` | Subheadline text |
+
+POST /generate/batch| `--logo` | Path to logo file |
+
+```| `--dimension, -d` | Post dimensions (square, vertical, story, etc.) |
+
+| `--color-scheme, -c` | Color scheme name |
+
+---| `--gradient-start` | Gradient start color (hex) |
+
+| `--gradient-end` | Gradient end color (hex) |
+
+## 🔗 n8n Integration| `--pattern` | Pattern type (lines, circles, rectangles) |
+
+| `--vignette` | Add vignette effect |
+
+### Quick Setup| `--noise` | Add noise texture |
+
+| `--shadow` | Add text shadow |
+
+1. **Start API:** `python api.py`| `--outline` | Add text outline |
+
+2. **In n8n:** Add HTTP Request node| `--output, -o` | Output file path |
+
+   - URL: `http://localhost:8000/generate`
+
+   - Method: POST## 🌐 REST API
+
+   - Body: JSON
 
 ### Start the API Server
 
+**Example Workflow:**
+
+```json```bash
+
+{python api.py
+
+  "text": "{{ $json.headline }}",```
+
+  "dimension": "square",
+
+  "color_scheme": "professional",API will be available at `http://localhost:8000`  
+
+  "add_vignette": trueInteractive docs at `http://localhost:8000/docs`
+
+}
+
+```### API Endpoints
+
+
+
+See **N8N_INTEGRATION_GUIDE.md** for complete documentation.#### Generate Post
+
 ```bash
-python api.py
+
+---POST /generate
+
 ```
 
-API will be available at `http://localhost:8000`  
-Interactive docs at `http://localhost:8000/docs`
-
-### API Endpoints
-
-#### Generate Post
-```bash
-POST /generate
-```
+## 📋 API Parameters (All Optional except text)
 
 **Request Body:**
-```json
-{
-  "text": "Innovation Starts Here",
+
+### Canvas```json
+
+- `dimension`: square, story, vertical, horizontal, wide, banner, custom{
+
+- `custom_width`, `custom_height`: For custom dimensions  "text": "Innovation Starts Here",
+
   "subtext": "Join us today",
-  "template": "professional_gradient",
-  "dimension": "square",
-  "color_scheme": "bold_red",
-  "add_vignette": true,
-  "text_shadow": true
+
+### Background  "template": "professional_gradient",
+
+- `bg_color`: #000000  "dimension": "square",
+
+- `color_scheme`: professional, bold_purple, etc.  "color_scheme": "bold_red",
+
+- `gradient_start`, `gradient_end`: #FF0000  "add_vignette": true,
+
+- `gradient_direction`: vertical, horizontal, diagonal, radial  "text_shadow": true
+
 }
-```
 
-**Response:** PNG image file
+### Patterns & Shapes```
 
-#### List Templates
+- `pattern`: lines
+
+- `pattern_color`, `pattern_spacing`, `pattern_angle`, `pattern_width`, `pattern_opacity`**Response:** PNG image file
+
+- `shape_type`: circles, rectangles, triangles
+
+- `shape_color`, `shape_count`, `shape_opacity`#### List Templates
+
 ```bash
-GET /templates
-```
 
-#### Get Template Details
-```bash
-GET /templates/{template_name}
-```
+### EffectsGET /templates
 
-#### List Color Schemes
+- `add_vignette`, `vignette_intensity````
+
+- `add_noise`, `noise_intensity`
+
+- `add_blur`, `blur_radius`#### Get Template Details
+
 ```bash
+
+### TextGET /templates/{template_name}
+
+- `text`: Main text (required)```
+
+- `text_x`, `text_y`, `font_size`, `text_color`, `text_max_width`
+
+- `text_shadow`, `text_outline`#### List Color Schemes
+
+- `subtext`, `subtext_x`, `subtext_y`, `subtext_font_size`, `subtext_color````bash
+
 GET /color-schemes
+
+### Text Box```
+
+- `add_textbox`, `textbox_content`
+
+- `textbox_x`, `textbox_y`, `textbox_width`, `textbox_height`#### Batch Generation
+
+- `textbox_bg_color`, `textbox_bg_opacity````bash
+
+- `textbox_text_color`, `textbox_font_size`, `textbox_padding`POST /generate/batch
+
 ```
 
-#### Batch Generation
-```bash
-POST /generate/batch
-```
+### Logo
 
-## 📊 Batch Generation
+- `logo`: File upload## 📊 Batch Generation
 
-### From CSV
+- `logo_position`: top-left, top-right, bottom-left, bottom-right, center
 
-```python
+- `logo_size`: 50-500### From CSV
+
+
+
+---```python
+
 from batch_generator import BatchGenerator
+
+## 📁 Project Structure
 
 batch = BatchGenerator(output_dir="output/batch")
 
-# Create sample CSV
-batch.create_sample_csv("posts.csv")
-
-# Generate from CSV
-batch.generate_from_csv("posts.csv", logo_path="logo.png")
 ```
 
-**CSV Format:**
-```csv
-template,text,subtext,output_filename
-professional_gradient,"Innovation starts here","Join us",post1.png
-bold_red_lines,"New Product Launch","Available Now",post2.png
+Post Generator/# Create sample CSV
+
+├── post_generator/          # Core librarybatch.create_sample_csv("posts.csv")
+
+│   ├── generator.py         # Main generator
+
+│   ├── color_schemes.py     # Color schemes# Generate from CSV
+
+│   ├── typography.py        # Text renderingbatch.generate_from_csv("posts.csv", logo_path="logo.png")
+
+│   └── template_loader.py   # Templates```
+
+├── fonts/                   # Font files
+
+├── output/                  # Generated images**CSV Format:**
+
+├── streamlit_app.py         # Visual UI```csv
+
+├── api.py                   # REST APItemplate,text,subtext,output_filename
+
+├── requirements.txt         # Dependenciesprofessional_gradient,"Innovation starts here","Join us",post1.png
+
+├── README.md               # This filebold_red_lines,"New Product Launch","Available Now",post2.png
+
+└── N8N_INTEGRATION_GUIDE.md # n8n guide```
+
 ```
 
 ### From JSON
 
+---
+
 ```python
-batch.generate_from_json("posts.json", logo_path="logo.png")
+
+## 💡 Quick Examplesbatch.generate_from_json("posts.json", logo_path="logo.png")
+
 ```
 
-**JSON Format:**
-```json
+### Python Code
+
+```python**JSON Format:**
+
+from post_generator import PostGenerator```json
+
 [
-  {
-    "template": "professional_gradient",
-    "text": "Innovation Starts Here",
-    "subtext": "Join the future",
-    "output_filename": "post1.png"
-  }
-]
+
+gen = PostGenerator()  {
+
+gen.create_canvas("square", (0, 0, 0))    "template": "professional_gradient",
+
+gen.apply_gradient((255, 0, 0), (0, 0, 0), "vertical")    "text": "Innovation Starts Here",
+
+gen.add_text("Hello World", position=(40, 400),     "subtext": "Join the future",
+
+             font_size=70, color=(255, 255, 255), shadow=True)    "output_filename": "post1.png"
+
+gen.save("output/my_post.png")  }
+
+```]
+
 ```
 
-### Command Line Batch Generation
+### cURL
 
-```bash
-# From CSV
-python batch_generator.py --csv posts.csv --logo logo.png --output-dir output/batch
+```bash### Command Line Batch Generation
 
-# From JSON
+curl -X POST "http://localhost:8000/generate" \
+
+  -H "Content-Type: application/json" \```bash
+
+  -d '{"text": "Hello World", "gradient_start": "#FF0000", # From CSV
+
+       "gradient_end": "#000000"}' \python batch_generator.py --csv posts.csv --logo logo.png --output-dir output/batch
+
+  --output post.png
+
+```# From JSON
+
 python batch_generator.py --json posts.json --logo logo.png
 
-# Create sample files
-python batch_generator.py --create-sample-csv
-python batch_generator.py --create-sample-json
-```
+---
 
-## 🎨 Available Templates
+# Create sample files
+
+## 🎯 Tipspython batch_generator.py --create-sample-csv
+
+python batch_generator.py --create-sample-json
+
+1. **Multi-line Text:** Use `\n` or press Enter in Streamlit```
+
+2. **Use Color Schemes:** Easier than manual colors
+
+3. **Stack Effects:** Combine vignette + noise + patterns## 🎨 Available Templates
+
+4. **Logo Positioning:** Test different positions
 
 1. **professional_gradient** - Clean professional look with gradient
-2. **bold_red_lines** - Bold red theme with diagonal lines
+
+---2. **bold_red_lines** - Bold red theme with diagonal lines
+
 3. **minimal_clean** - Minimalist gray design
-4. **corporate_professional** - Corporate blue with radial gradient
+
+## 🐛 Troubleshooting4. **corporate_professional** - Corporate blue with radial gradient
+
 5. **creative_textbox** - Ocean gradient with text boxes
-6. **bold_purple_modern** - Modern purple with noise texture
-7. **linkedin_story** - Optimized for LinkedIn stories (1080x1920)
-8. **sunset_horizontal** - Horizontal format with sunset colors
-9. **dark_geometric** - Dark theme with geometric patterns
+
+**Streamlit won't start:**6. **bold_purple_modern** - Modern purple with noise texture
+
+```bash7. **linkedin_story** - Optimized for LinkedIn stories (1080x1920)
+
+pip install --upgrade streamlit8. **sunset_horizontal** - Horizontal format with sunset colors
+
+```9. **dark_geometric** - Dark theme with geometric patterns
+
 10. **forest_minimal** - Forest green minimal design
 
-## 🎨 Color Schemes
+**API errors:**
+
+- Check port 8000 is available## 🎨 Color Schemes
+
+- Visit http://localhost:8000/docs for testing
 
 ### Professional
-- `professional_dark` - Black and LinkedIn blue
-- `professional_blue` - LinkedIn primary colors
 
-### Bold
+**Fonts not loading:**- `professional_dark` - Black and LinkedIn blue
+
+- Fonts in `fonts/` directory will auto-fallback if missing- `professional_blue` - LinkedIn primary colors
+
+
+
+---### Bold
+
 - `bold_red` - Bold red on black
-- `bold_purple` - Vibrant purple
+
+## 🚀 Ready to Create!- `bold_purple` - Vibrant purple
+
 - `bold_orange` - Energetic orange
 
-### Minimal
-- `minimal_light` - Clean white and gray
+- **Visual UI:** `streamlit run streamlit_app.py`
+
+- **API:** `python api.py`### Minimal
+
+- **Docs:** http://localhost:8000/docs- `minimal_light` - Clean white and gray
+
 - `minimal_gray` - Subtle gray tones
+
+Start generating amazing social media posts! 🚀
 
 ### Gradient
 - `gradient_sunset` - Pink to red sunset

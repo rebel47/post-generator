@@ -38,20 +38,53 @@ class PostRequest(BaseModel):
     subtext: Optional[str] = None
     template: Optional[str] = None
     dimension: str = "square"
+    custom_width: Optional[int] = None
+    custom_height: Optional[int] = None
     color_scheme: Optional[str] = None
+    bg_color: Optional[str] = None
     gradient_start: Optional[str] = None
     gradient_end: Optional[str] = None
     gradient_direction: str = "vertical"
     pattern: Optional[str] = None
+    pattern_color: Optional[str] = None
     pattern_angle: int = 45
     pattern_spacing: int = 50
+    pattern_width: int = 2
+    pattern_opacity: int = 30
+    shape_type: Optional[str] = None
+    shape_color: Optional[str] = None
+    shape_count: int = 15
+    shape_opacity: int = 20
     add_vignette: bool = False
+    vignette_intensity: float = 0.5
     add_noise: bool = False
+    noise_intensity: int = 5
+    add_blur: bool = False
+    blur_radius: int = 5
     text_shadow: bool = False
     text_outline: bool = False
+    text_x: int = 40
+    text_y: int = 400
     font_size: int = 70
     text_color: str = "#FFFFFF"
+    text_max_width: int = 900
+    subtext_x: int = 40
+    subtext_y: int = 650
+    subtext_font_size: int = 40
+    subtext_color: Optional[str] = None
     logo_position: str = "top-left"
+    logo_size: int = 150
+    add_textbox: bool = False
+    textbox_content: Optional[str] = None
+    textbox_x: int = 40
+    textbox_y: int = 800
+    textbox_width: int = 900
+    textbox_height: int = 200
+    textbox_bg_color: str = "#000000"
+    textbox_bg_opacity: int = 200
+    textbox_text_color: str = "#FFFFFF"
+    textbox_font_size: int = 35
+    textbox_padding: int = 25
 
 
 class TemplateInfo(BaseModel):
@@ -69,11 +102,31 @@ async def root():
         "message": "Post Generator API",
         "version": "1.0.0",
         "endpoints": {
-            "generate": "/generate",
-            "templates": "/templates",
-            "color_schemes": "/color-schemes",
-            "health": "/health"
-        }
+            "generate": "POST /generate - Generate a single post",
+            "generate_advanced": "POST /generate/advanced - Generate with all options",
+            "generate_batch": "POST /generate/batch - Generate multiple posts",
+            "templates": "GET /templates - List all templates",
+            "template_detail": "GET /templates/{name} - Get template details",
+            "color_schemes": "GET /color-schemes - List color schemes",
+            "color_scheme_detail": "GET /color-schemes/{name} - Get color scheme details",
+            "dimensions": "GET /dimensions - List available dimensions",
+            "health": "GET /health - Health check"
+        },
+        "docs": "/docs - Interactive API documentation"
+    }
+
+
+@app.get("/dimensions")
+async def list_dimensions():
+    """List all available post dimensions"""
+    return {
+        "square": {"width": 1080, "height": 1080, "description": "Instagram post"},
+        "story": {"width": 1080, "height": 1920, "description": "Instagram/Facebook story"},
+        "vertical": {"width": 1080, "height": 1350, "description": "Instagram portrait"},
+        "horizontal": {"width": 1200, "height": 630, "description": "Facebook/LinkedIn"},
+        "wide": {"width": 1920, "height": 1080, "description": "YouTube thumbnail"},
+        "banner": {"width": 1500, "height": 500, "description": "Twitter header"},
+        "custom": {"width": "user-defined", "height": "user-defined", "description": "Custom size"}
     }
 
 
@@ -221,49 +274,91 @@ async def generate_post(
             if request.color_scheme:
                 scheme = ColorSchemes.get_scheme(request.color_scheme)
                 bg_color = scheme.get_background_rgb()
+            elif request.bg_color:
+                bg_color = hex_to_rgb(request.bg_color)
             
-            generator.create_canvas(request.dimension, bg_color)
+            # Handle custom dimensions
+            canvas_size = request.dimension
+            if request.dimension == "custom" and request.custom_width and request.custom_height:
+                canvas_size = (request.custom_width, request.custom_height)
             
+            generator.create_canvas(canvas_size, bg_color)
+            
+            # Gradient
             if request.gradient_start and request.gradient_end:
                 start = hex_to_rgb(request.gradient_start)
                 end = hex_to_rgb(request.gradient_end)
                 generator.apply_gradient(start, end, request.gradient_direction)
             
-            if request.pattern:
-                if request.pattern == 'lines':
-                    generator.add_pattern_lines(
-                        spacing=request.pattern_spacing,
-                        angle=request.pattern_angle
-                    )
-                else:
-                    generator.add_geometric_shapes(request.pattern)
+            # Patterns
+            if request.pattern == 'lines':
+                pattern_color = hex_to_rgb(request.pattern_color) if request.pattern_color else (255, 255, 255)
+                generator.add_pattern_lines(
+                    color=pattern_color,
+                    spacing=request.pattern_spacing,
+                    angle=request.pattern_angle,
+                    width=request.pattern_width,
+                    opacity=request.pattern_opacity
+                )
             
+            # Geometric shapes
+            if request.shape_type:
+                shape_color = hex_to_rgb(request.shape_color) if request.shape_color else (255, 255, 255)
+                generator.add_geometric_shapes(
+                    request.shape_type,
+                    color=shape_color,
+                    opacity=request.shape_opacity,
+                    count=request.shape_count
+                )
+            
+            # Effects
+            # Effects
             if request.add_vignette:
-                generator.add_vignette()
+                generator.add_vignette(request.vignette_intensity)
             if request.add_noise:
-                generator.add_noise()
+                generator.add_noise(request.noise_intensity)
+            if request.add_blur:
+                generator.add_blur(request.blur_radius)
             
+            # Logo
             if logo_path:
-                generator.add_logo(logo_path, position=request.logo_position)
+                generator.add_logo(logo_path, position=request.logo_position, size=(request.logo_size, request.logo_size))
             
+            # Main text
             text_color = hex_to_rgb(request.text_color)
             generator.add_text(
                 request.text,
-                position=(40, 400),
+                position=(request.text_x, request.text_y),
                 font_size=request.font_size,
                 color=text_color,
-                max_width=900,
+                max_width=request.text_max_width,
                 shadow=request.text_shadow,
                 outline=request.text_outline
             )
             
+            # Subtext
             if request.subtext:
+                subtext_color = hex_to_rgb(request.subtext_color) if request.subtext_color else text_color
                 generator.add_text(
                     request.subtext,
-                    position=(40, 550),
-                    font_size=40,
-                    color=text_color,
-                    max_width=900
+                    position=(request.subtext_x, request.subtext_y),
+                    font_size=request.subtext_font_size,
+                    color=subtext_color,
+                    max_width=request.text_max_width
+                )
+            
+            # Text box
+            if request.add_textbox and request.textbox_content:
+                tb_bg = hex_to_rgb(request.textbox_bg_color) + (request.textbox_bg_opacity,)
+                tb_text = hex_to_rgb(request.textbox_text_color)
+                generator.add_text_box(
+                    request.textbox_content,
+                    box_position=(request.textbox_x, request.textbox_y),
+                    box_size=(request.textbox_width, request.textbox_height),
+                    bg_color=tb_bg,
+                    text_color=tb_text,
+                    font_size=request.textbox_font_size,
+                    padding=request.textbox_padding
                 )
         
         # Save and return
