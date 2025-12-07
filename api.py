@@ -14,6 +14,7 @@ import tempfile
 from post_generator import PostGenerator
 from post_generator.color_schemes import ColorSchemes
 from post_generator.template_loader import TemplateLoader
+from news_fetcher import NewsFetcher
 
 
 app = FastAPI(
@@ -872,6 +873,322 @@ async def generate_batch_smart(batch: BatchTextRequest):
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# NEWS FETCHER ENDPOINTS
+# ============================================================================
+
+# Initialize news fetcher (lazy loading)
+_news_fetcher = None
+
+def get_news_fetcher(
+    language: str = 'en',
+    country: str = 'US',
+    period: str = '7d',
+    max_results: int = 10
+):
+    """Get or create news fetcher instance"""
+    return NewsFetcher(
+        language=language,
+        country=country,
+        period=period,
+        max_results=max_results
+    )
+
+
+@app.get("/news/top")
+async def get_top_news(
+    language: str = 'en',
+    country: str = 'US',
+    period: str = '7d',
+    max_results: int = 10
+):
+    """
+    Get top news headlines
+    
+    Args:
+        language: Language code (default: 'en')
+        country: Country code (default: 'US')
+        period: Time period (7d, 1m, 1y)
+        max_results: Maximum number of results (default: 10)
+    
+    Returns:
+        List of top news articles
+    
+    Example:
+        GET /news/top?country=US&period=7d&max_results=5
+    """
+    try:
+        fetcher = get_news_fetcher(language, country, period, max_results)
+        articles = fetcher.get_top_news()
+        
+        return {
+            "status": "success",
+            "count": len(articles),
+            "language": language,
+            "country": country,
+            "period": period,
+            "articles": articles
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching top news: {str(e)}")
+
+
+@app.get("/news/search")
+async def search_news(
+    keyword: str,
+    language: str = 'en',
+    country: str = 'US',
+    period: str = '7d',
+    max_results: int = 10
+):
+    """
+    Search news by keyword
+    
+    Args:
+        keyword: Search keyword (required)
+        language: Language code
+        country: Country code
+        period: Time period
+        max_results: Maximum results
+    
+    Returns:
+        List of news articles matching keyword
+    
+    Example:
+        GET /news/search?keyword=artificial+intelligence&max_results=5
+    """
+    try:
+        fetcher = get_news_fetcher(language, country, period, max_results)
+        articles = fetcher.get_news_by_keyword(keyword)
+        
+        return {
+            "status": "success",
+            "keyword": keyword,
+            "count": len(articles),
+            "language": language,
+            "country": country,
+            "period": period,
+            "articles": articles
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error searching news: {str(e)}")
+
+
+@app.get("/news/topic/{topic}")
+async def get_news_by_topic(
+    topic: str,
+    language: str = 'en',
+    country: str = 'US',
+    period: str = '7d',
+    max_results: int = 10
+):
+    """
+    Get news by topic
+    
+    Args:
+        topic: Topic name (WORLD, BUSINESS, TECHNOLOGY, ENTERTAINMENT, SPORTS, etc.)
+        language: Language code
+        country: Country code
+        period: Time period
+        max_results: Maximum results
+    
+    Returns:
+        List of news articles for the topic
+    
+    Example:
+        GET /news/topic/TECHNOLOGY?max_results=5
+    """
+    try:
+        fetcher = get_news_fetcher(language, country, period, max_results)
+        articles = fetcher.get_news_by_topic(topic)
+        
+        return {
+            "status": "success",
+            "topic": topic.upper(),
+            "count": len(articles),
+            "language": language,
+            "country": country,
+            "period": period,
+            "articles": articles
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching news by topic: {str(e)}")
+
+
+@app.get("/news/location")
+async def get_news_by_location(
+    location: str,
+    language: str = 'en',
+    country: str = 'US',
+    period: str = '7d',
+    max_results: int = 10
+):
+    """
+    Get news by location
+    
+    Args:
+        location: City/state/country name (required)
+        language: Language code
+        country: Country code
+        period: Time period
+        max_results: Maximum results
+    
+    Returns:
+        List of news articles for the location
+    
+    Example:
+        GET /news/location?location=New+York&max_results=5
+    """
+    try:
+        fetcher = get_news_fetcher(language, country, period, max_results)
+        articles = fetcher.get_news_by_location(location)
+        
+        return {
+            "status": "success",
+            "location": location,
+            "count": len(articles),
+            "language": language,
+            "country": country,
+            "period": period,
+            "articles": articles
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching news by location: {str(e)}")
+
+
+@app.get("/news/site")
+async def get_news_by_site(
+    site: str,
+    language: str = 'en',
+    country: str = 'US',
+    period: str = '7d',
+    max_results: int = 10
+):
+    """
+    Get news from specific website
+    
+    Args:
+        site: Website domain (e.g., 'cnn.com', 'bbc.com')
+        language: Language code
+        country: Country code
+        period: Time period
+        max_results: Maximum results
+    
+    Returns:
+        List of news articles from the site
+    
+    Example:
+        GET /news/site?site=cnn.com&max_results=5
+    """
+    try:
+        fetcher = get_news_fetcher(language, country, period, max_results)
+        articles = fetcher.get_news_by_site(site)
+        
+        return {
+            "status": "success",
+            "site": site,
+            "count": len(articles),
+            "language": language,
+            "country": country,
+            "period": period,
+            "articles": articles
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching news by site: {str(e)}")
+
+
+@app.get("/news/article")
+async def get_full_article(url: str):
+    """
+    Get full article content
+    
+    Args:
+        url: Article URL (required)
+    
+    Returns:
+        Full article with title, text, images, etc.
+    
+    Example:
+        GET /news/article?url=https://example.com/article
+    """
+    try:
+        fetcher = NewsFetcher()
+        article = fetcher.get_full_article(url)
+        
+        if 'error' in article:
+            raise HTTPException(status_code=404, detail=article['error'])
+        
+        return {
+            "status": "success",
+            "article": article
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching article: {str(e)}")
+
+
+@app.get("/news/available-countries")
+async def get_available_countries():
+    """
+    Get list of available countries
+    
+    Returns:
+        Dictionary of country names and codes
+    
+    Example:
+        GET /news/available-countries
+    """
+    try:
+        countries = NewsFetcher.get_available_countries()
+        return {
+            "status": "success",
+            "count": len(countries),
+            "countries": countries
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching countries: {str(e)}")
+
+
+@app.get("/news/available-languages")
+async def get_available_languages():
+    """
+    Get list of available languages
+    
+    Returns:
+        Dictionary of language names and codes
+    
+    Example:
+        GET /news/available-languages
+    """
+    try:
+        languages = NewsFetcher.get_available_languages()
+        return {
+            "status": "success",
+            "count": len(languages),
+            "languages": languages
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching languages: {str(e)}")
+
+
+@app.get("/news/topics")
+async def get_available_topics():
+    """
+    Get list of available news topics
+    
+    Returns:
+        List of topic names
+    
+    Example:
+        GET /news/topics
+    """
+    return {
+        "status": "success",
+        "topics": NewsFetcher.TOPICS
+    }
 
 
 def hex_to_rgb(hex_color: str) -> tuple:
