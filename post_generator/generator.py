@@ -311,6 +311,70 @@ class PostGenerator:
         
         return self
     
+    def add_image(self, image_path: str, position: str = "center",
+                 size: Optional[Tuple[int, int]] = None,
+                 margin: int = 40, custom_position: Optional[Tuple[int, int]] = None,
+                 opacity: int = 255) -> 'PostGenerator':
+        """
+        Add an additional image overlay to the canvas
+        
+        Args:
+            image_path: Path to image file
+            position: "top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right", "center"
+            size: Maximum image size (will maintain aspect ratio), if None uses original size
+            margin: Margin from edges
+            custom_position: Custom (x, y) position (overrides position preset)
+            opacity: Image opacity (0-255)
+        """
+        if not os.path.exists(image_path):
+            print(f"Warning: Image file not found: {image_path}")
+            return self
+        
+        try:
+            image = Image.open(image_path).convert("RGBA")
+            
+            # Resize if size specified
+            if size:
+                image.thumbnail(size, Image.Resampling.LANCZOS)
+            
+            # Apply opacity
+            if opacity < 255:
+                alpha = image.split()[3]
+                alpha = ImageEnhance.Brightness(alpha).enhance(opacity / 255.0)
+                image.putalpha(alpha)
+            
+            # Calculate position
+            if custom_position:
+                x, y = custom_position
+            else:
+                img_w, img_h = image.size
+                
+                if position == "top-left":
+                    x, y = margin, margin
+                elif position == "top-center":
+                    x, y = (self.width - img_w) // 2, margin
+                elif position == "top-right":
+                    x, y = self.width - img_w - margin, margin
+                elif position == "bottom-left":
+                    x, y = margin, self.height - img_h - margin
+                elif position == "bottom-center":
+                    x, y = (self.width - img_w) // 2, self.height - img_h - margin
+                elif position == "bottom-right":
+                    x, y = self.width - img_w - margin, self.height - img_h - margin
+                elif position == "center":
+                    x, y = (self.width - img_w) // 2, (self.height - img_h) // 2
+                else:
+                    x, y = margin, margin
+            
+            # Paste image with transparency
+            self.img.paste(image, (x, y), image)
+            self.draw = ImageDraw.Draw(self.img)
+        
+        except Exception as e:
+            print(f"Warning: Could not add image. Error: {e}")
+        
+        return self
+    
     def add_text(self, text: str, position: Tuple[int, int],
                 font_path: str = "fonts/Poppins-Bold.ttf", font_size: int = 70,
                 color: Tuple[int, int, int] = (255, 255, 255),

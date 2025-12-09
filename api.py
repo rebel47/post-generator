@@ -243,7 +243,11 @@ async def generate_post_form(
     textbox_text_color: str = Form("#FFFFFF"),
     textbox_font_size: int = Form(35),
     textbox_padding: int = Form(25),
-    logo: Optional[UploadFile] = File(None)
+    logo: Optional[UploadFile] = File(None),
+    additional_image: Optional[UploadFile] = File(None),
+    additional_image_position: str = Form("center"),
+    additional_image_size: Optional[int] = Form(None),
+    additional_image_opacity: int = Form(255)
 ):
     """
     Generate post from form-data (for n8n with file uploads)
@@ -253,12 +257,19 @@ async def generate_post_form(
         output_dir = tempfile.gettempdir()
         output_path = os.path.join(output_dir, f"post_{uuid.uuid4()}.png")
         logo_path = None
+        additional_image_path = None
         
         # Save uploaded logo
         if logo:
             logo_path = os.path.join(output_dir, f"logo_{uuid.uuid4()}{os.path.splitext(logo.filename)[1]}")
             with open(logo_path, "wb") as f:
                 f.write(await logo.read())
+        
+        # Save uploaded additional image
+        if additional_image:
+            additional_image_path = os.path.join(output_dir, f"image_{uuid.uuid4()}{os.path.splitext(additional_image.filename)[1]}")
+            with open(additional_image_path, "wb") as f:
+                f.write(await additional_image.read())
         
         # Canvas
         canvas_size = dimension
@@ -314,6 +325,16 @@ async def generate_post_form(
         if logo_path:
             generator.add_logo(logo_path, position=logo_position, size=(logo_size, logo_size))
         
+        # Additional Image
+        if additional_image_path:
+            img_size = (additional_image_size, additional_image_size) if additional_image_size else None
+            generator.add_image(
+                additional_image_path,
+                position=additional_image_position,
+                size=img_size,
+                opacity=additional_image_opacity
+            )
+        
         # Main text
         text_rgb = hex_to_rgb(text_color)
         generator.add_text(
@@ -357,6 +378,8 @@ async def generate_post_form(
         # Cleanup
         if logo_path and os.path.exists(logo_path):
             os.remove(logo_path)
+        if additional_image_path and os.path.exists(additional_image_path):
+            os.remove(additional_image_path)
         
         return FileResponse(
             output_path,
@@ -1099,35 +1122,93 @@ async def get_news_by_site(
         raise HTTPException(status_code=500, detail=f"Error fetching news by site: {str(e)}")
 
 
-@app.get("/news/article")
-async def get_full_article(url: str):
+@app.get("/news/decode-google-url")
+async def decode_google_news_url(url: str):
     """
-    Get full article content
+    Decode Google News URL to get the real article URL
     
     Args:
-        url: Article URL (required)
+        url: Google News URL (news.google.com/rss/articles/...)
     
     Returns:
-        Full article with title, text, images, etc.
+        Decoded URL and status
     
     Example:
-        GET /news/article?url=https://example.com/article
+        GET /news/decode-google-url?url=https://news.google.com/rss/articles/CBMi...
+    
+    Note:
+        This uses Google News's internal batchexecute API to properly decode URLs
     """
     try:
-        fetcher = NewsFetcher()
-        article = fetcher.get_full_article(url)
+        import json
+        from urllib.parse import quote, urlparse
+        import requests
+        from bs4 import BeautifulSoup
         
-        if 'error' in article:
-            raise HTTPException(status_code=404, detail=article['error'])
+        def get_decoding_params(gn_art_id: str) -> dict:
+            # Step 1: fetch Google News internal article page
+            resp = requests.get(f"https://news.google.com/rss/articles/{gn_art_id}")
+            resp.raise_for_status()
+            
+            soup = BeautifulSoup(resp.text, "lxml")
+            div = soup.select_one("c-wiz > div")
+            
+            return {
+                "signature": div.get("data-n-a-sg"),
+                "timestamp": div.get("data-n-a-ts"),
+                "gn_art_id": gn_art_id,
+            }
+        
+        def decode_urls(articles_params: list) -> list:
+            # Step 2: build batchexecute payload
+            articles_reqs = [
+                [
+                    "Fbv4je",
+                    (
+                        f'[\"garturlreq\",[[\"X\",\"X\",[\"X\",\"X\"],null,null,1,1,\"US:en\",'
+                        f'null,1,null,null,null,null,null,0,1],\"X\",\"X\",1,[1,1,1],1,1,'
+                        f'null,0,0,null,0],\"{art["gn_art_id"]}\",{art["timestamp"]},'
+                        f'\"{art["signature"]}\"]'
+                    ),
+                ]
+                for art in articles_params
+            ]
+            
+            payload = f"f.req={quote(json.dumps([articles_reqs]))}"
+            headers = {"content-type": "application/x-www-form-urlencoded;charset=UTF-8"}
+            
+            resp = requests.post(
+                "https://news.google.com/_/DotsSplashUi/data/batchexecute",
+                headers=headers,
+                data=payload,
+            )
+            resp.raise_for_status()
+            
+            # Step 3: parse final URLs
+            body = resp.text.split("\n\n")[1]
+            parsed = json.loads(body)[:-2]
+            return [json.loads(item[2])[1] for item in parsed]
+        
+        # Extract article ID from URL
+        gn_art_id = urlparse(url).path.split("/")[-1]
+        
+        # Get decoding parameters and decode
+        params = get_decoding_params(gn_art_id)
+        decoded_url = decode_urls([params])[0]
         
         return {
             "status": "success",
-            "article": article
+            "original_url": url,
+            "decoded_url": decoded_url,
+            "message": "URL decoded successfully"
         }
-    except HTTPException:
-        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching article: {str(e)}")
+        return {
+            "status": "error",
+            "original_url": url,
+            "message": f"Could not decode URL: {str(e)}",
+            "error": str(e)
+        }
 
 
 @app.get("/news/available-countries")

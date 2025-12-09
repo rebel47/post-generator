@@ -69,12 +69,25 @@ with col1:
     if logo_file:
         logo_position = st.selectbox(
             "Logo Position",
-            ["top-left", "top-right", "bottom-left", "bottom-right", "center"]
+            ["top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right", "center"]
         )
         logo_size = st.slider("Logo Size", 50, 500, 150, 10)
     
+    # Additional Image upload
+    st.subheader("4. Additional Image (Optional)")
+    additional_image_file = st.file_uploader("Upload Additional Image", type=["png", "jpg", "jpeg"])
+    
+    if additional_image_file:
+        additional_image_position = st.selectbox(
+            "Image Position",
+            ["center", "top-left", "top-center", "top-right", "bottom-left", "bottom-center", "bottom-right"],
+            key="additional_image_position"
+        )
+        additional_image_size = st.slider("Image Max Size (0 = original)", 0, 1000, 400, 50, key="additional_image_size")
+        additional_image_opacity = st.slider("Image Opacity", 0, 255, 255, 5, key="additional_image_opacity")
+    
     # Effects
-    st.subheader("4. Effects")
+    st.subheader("5. Effects")
     
     add_vignette = st.checkbox("Add Vignette")
     if add_vignette:
@@ -89,7 +102,7 @@ with col1:
         blur_radius = st.slider("Blur Radius", 1, 20, 5, 1)
     
     # Patterns
-    st.subheader("5. Patterns (Optional)")
+    st.subheader("6. Patterns (Optional)")
     add_pattern = st.checkbox("Add Pattern")
     
     if add_pattern:
@@ -271,6 +284,22 @@ if generate_button:
                     temp_logo_path,
                     position=logo_position,
                     size=(logo_size, logo_size)
+                )
+            
+            # Add additional image
+            if additional_image_file:
+                # Save uploaded image temporarily
+                temp_image_path = os.path.join("output", "temp_additional_image.png")
+                os.makedirs("output", exist_ok=True)
+                with open(temp_image_path, "wb") as f:
+                    f.write(additional_image_file.getbuffer())
+                
+                img_size = (additional_image_size, additional_image_size) if additional_image_size > 0 else None
+                gen.add_image(
+                    temp_image_path,
+                    position=additional_image_position,
+                    size=img_size,
+                    opacity=additional_image_opacity
                 )
             
             # Add main text

@@ -5,7 +5,6 @@ Uses GNews to fetch trending news articles for post generation
 
 from gnews import GNews
 from typing import List, Dict, Optional
-from newspaper import Article
 
 
 class NewsFetcher:
@@ -119,38 +118,6 @@ class NewsFetcher:
         except Exception as e:
             print(f"Error fetching news from site '{site}': {e}")
             return []
-    
-    def get_full_article(self, url: str) -> Dict:
-        """
-        Get full article content from URL
-        
-        Args:
-            url: Article URL
-        
-        Returns:
-            Dictionary with article details
-        """
-        try:
-            article = Article(url)
-            article.download()
-            article.parse()
-            
-            return {
-                'url': url,
-                'title': article.title,
-                'text': article.text,
-                'authors': article.authors,
-                'publish_date': str(article.publish_date) if article.publish_date else None,
-                'top_image': article.top_image,
-                'images': list(article.images) if article.images else [],
-                'summary': article.text[:500] + '...' if len(article.text) > 500 else article.text
-            }
-        except Exception as e:
-            print(f"Error fetching full article from '{url}': {e}")
-            return {
-                'url': url,
-                'error': str(e)
-            }
     
     def get_articles_for_posts(
         self,
