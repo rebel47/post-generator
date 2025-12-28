@@ -995,6 +995,54 @@ ngrok http 8000
 
 Your API will be available at: `https://your-subdomain.ngrok-free.app`
 
+---
+
+## 🌐 Exposing Endpoints with ngrok
+
+You can use [ngrok](https://ngrok.com/) to make your local API accessible over the internet for testing, webhooks, or integrations (e.g., with n8n, Zapier, or external services).
+
+### Step-by-Step (Windows)
+
+1. **Download ngrok:**
+  - Go to https://ngrok.com/download and download the Windows version.
+  - Unzip and place `ngrok.exe` in a folder (e.g., `C:\ngrok`).
+
+2. **(Optional) Add ngrok to PATH:**
+  - Add the folder containing `ngrok.exe` to your system PATH for easier access from any terminal.
+
+3. **Start your API server:**
+  - Open a terminal and run:
+    ```bash
+    python api.py
+    ```
+
+4. **Expose your API with ngrok:**
+  - Open a new terminal and run:
+    ```bash
+    C:\ngrok\ngrok.exe http 8000
+    ```
+    Or, if added to PATH:
+    ```bash
+    ngrok http 8000
+    ```
+
+5. **Copy the Forwarding URL:**
+  - ngrok will display a `Forwarding` URL like `https://your-subdomain.ngrok-free.app`.
+  - Use this URL to access your API from anywhere or configure webhooks.
+
+### Example: Test with curl
+
+```bash
+curl "https://your-subdomain.ngrok-free.app/health"
+```
+
+### Notes
+- The free ngrok plan gives you a random subdomain each time you start it.
+- For custom subdomains or reserved domains, sign up for a free ngrok account and follow their setup instructions.
+- Keep both the API server and ngrok terminal open while testing.
+
+---
+
 ### Production Deployment
 
 **Docker:**
